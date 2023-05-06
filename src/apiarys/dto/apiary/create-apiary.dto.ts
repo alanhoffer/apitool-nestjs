@@ -1,4 +1,4 @@
-import { Settings } from "../settings.entity";
+import { Settings } from "../../settings.entity";
 
 export class createApiaryDto {
     
@@ -12,12 +12,12 @@ export class createApiaryDto {
     box?: number;
     boxMedium?: number;
     boxSmall?: number;
-    tAxalic?: number;
+    tOxalic?: number;
     tAmitraz?: number;
     tFlumetrine?: number;
     tFence?: number;
     tComment?: string;
-    settings:Settings;
+    settings: string;
     createdAt?: Date;
     updatedAt?: Date;
 

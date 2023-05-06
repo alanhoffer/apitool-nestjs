@@ -1,5 +1,7 @@
 export class createSettingsDto {
     
+    userId: number;
+    apiaryId:number;
     honey: boolean;
     levudex: boolean;
     sugar: boolean;

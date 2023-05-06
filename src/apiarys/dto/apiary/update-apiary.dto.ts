@@ -1,4 +1,4 @@
-import { Settings } from '../settings.entity';
+import { Settings } from '../../settings.entity';
 
 export class updateApiaryDto {
   image?: string;

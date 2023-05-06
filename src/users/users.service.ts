@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './user.entity';
 import { Repository } from 'typeorm';
@@ -11,16 +11,20 @@ export class UsersService {
         @InjectRepository(User) 
         private userRepository: Repository<User>
     ){}
-
+    
+    // Function to get an (User) row finding in the db passing the id as conditional
     async getUser(id:number): Promise<User | undefined>{
-        const foundUser = await this.userRepository.findOne({where: {id}})
+        const foundedUser = await this.userRepository.findOne({where: {id}})
 
-        if(!foundUser){
+        // if user hasn't founded will return undefined
+        if(!foundedUser){
             return undefined;
         }
-
-        return foundUser
+        
+        // else will return the user founded
+        return foundedUser
     }
+
 
     async getUserByEmail(email:string): Promise<User | undefined>{
         const foundUser =  this.userRepository.findOne({where: {email}});

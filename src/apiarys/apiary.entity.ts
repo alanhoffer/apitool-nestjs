@@ -1,7 +1,7 @@
-import { IsInt, Min, Max } from 'class-validator';
 import { User } from 'src/users/user.entity';
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToOne, JoinColumn, Index, PrimaryColumn, ViewColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToOne, JoinColumn, Index, PrimaryColumn } from 'typeorm';
 import { Settings } from './settings.entity';
+import { APIARY_IMG_URL } from 'src/constants/nestConfig';
 
 @Entity({ name: 'apiarys' })
 export class Apiary {
@@ -16,7 +16,7 @@ export class Apiary {
     @PrimaryColumn({nullable: false})
     userId: number;
 
-    @Column({ default: 'https://imgur.com/hzNeqBM' })
+    @Column({ default: `apiary-default.png` })
     image: string;
 
     @Column({ default: 0 })
