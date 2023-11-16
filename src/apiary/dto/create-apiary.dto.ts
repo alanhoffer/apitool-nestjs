@@ -1,4 +1,4 @@
-import { Settings } from "../../settings.entity";
+import { Settings } from "../setting/settings.entity";
 
 export class createApiaryDto {
     

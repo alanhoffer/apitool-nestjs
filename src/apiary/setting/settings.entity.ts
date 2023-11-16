@@ -1,8 +1,8 @@
-import { Column, Entity, JoinColumn, OneToOne, PrimaryColumn, PrimaryGeneratedColumn, ViewColumn } from "typeorm";
-import { Apiary } from "./apiary.entity";
+import { Column, Entity, JoinColumn, OneToOne, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
+import { Apiary } from "../apiary.entity";
 
 
-@Entity('apiary_settings')
+@Entity('apiary_setting')
 export class Settings {
 
     @PrimaryGeneratedColumn()

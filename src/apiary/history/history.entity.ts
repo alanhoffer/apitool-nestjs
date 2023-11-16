@@ -1,9 +1,8 @@
 import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from "typeorm";
-import { Apiary } from "./apiary.entity";
-import { User } from "src/users/user.entity";
 
 
-@Entity('apiarys_history')
+
+@Entity('apiary_history')
 export class History {
 
     @PrimaryGeneratedColumn()

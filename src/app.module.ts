@@ -2,20 +2,21 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
-import { UsersModule } from './users/users.module';
+import { UsersModule } from './user/user.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from './users/user.entity';
-import { ApiarysModule } from './apiarys/apiarys.module';
-import { Apiary } from './apiarys/apiary.entity';
-import { Settings } from './apiarys/settings.entity';
-import { History } from './apiarys/history.entity';
+import { User } from './user/user.entity';
+import { ApiaryModule } from './apiary/apiary.module';
+import { Apiary } from './apiary/apiary.entity';
+import { Settings } from './apiary/setting/settings.entity';
+import { History } from './apiary/history/history.entity';
 import { NewsModule } from './news/news.module';
 import { News } from './news/entities/news.entity';
-import { MulterModule } from '@nestjs/platform-express';
+import { ScheduleModule } from '@nestjs/schedule';
 
 
 @Module({
   imports: [
+    ScheduleModule.forRoot(),
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: 'localhost',
@@ -28,10 +29,10 @@ import { MulterModule } from '@nestjs/platform-express';
     }),
     AuthModule,
     UsersModule,
-    ApiarysModule,
+    ApiaryModule,
     NewsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }
