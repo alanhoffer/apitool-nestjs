@@ -1,9 +1,9 @@
-import { Apiary } from 'src/apiary/apiary.entity';
+import { Apiary } from '../apiary/apiary.entity';
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany, JoinColumn } from 'typeorm';
 import { Role } from './role.enum';
 import * as bcrypt from 'bcrypt';
 import { Exclude, instanceToPlain } from 'class-transformer';
-import { News } from 'src/news/entities/news.entity';
+import { News } from '../news/entities/news.entity';
 
 @Entity({ name: 'user' })
 export class User {

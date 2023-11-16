@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, Index } from 'typeorm';
-import { User } from 'src/user/user.entity';
+import { User } from '../../user/user.entity';
 
 @Entity({name: 'news'})
 @Index('idx_date', ['date'])
