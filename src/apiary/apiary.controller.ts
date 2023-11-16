@@ -19,7 +19,7 @@ import {
 import { ApiaryService } from './apiary.service';
 import { createApiaryDto } from './dto/create-apiary.dto';
 import { updateApiaryDto } from './dto/update-apiary.dto';
-import { AuthGuard } from 'src/auth/auth.guard';
+import { AuthGuard } from '../auth/auth.guard';
 import { updateSettingsDto } from './setting/dto/update-settings.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
@@ -28,7 +28,7 @@ import { join } from 'path';
 import { createReadStream } from 'fs';
 import { Response } from 'express';
 import { Apiary } from './apiary.entity';
-import { UserService } from 'src/user/user.service';
+import { UserService } from '../user/user.service';
 
 
 @Controller('apiarys')
