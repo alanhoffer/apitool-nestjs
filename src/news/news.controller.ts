@@ -1,34 +1,39 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Param, UseGuards, Request } from '@nestjs/common';
 import { NewsService } from './news.service';
-import { CreateNewsDto } from './dto/create-news.dto';
-import { UpdateNewsDto } from './dto/update-news.dto';
+import { News } from './entities/news.entity';
+import { RolesGuard } from 'src/roles/roles.guard';
+import { Roles } from 'src/roles/roles.decorator';
+import { AuthGuard } from 'src/auth/auth.guard';
+
 
 @Controller('news')
 export class NewsController {
   constructor(private readonly newsService: NewsService) {}
 
-  @Post()
-  create(@Body() createNewsDto: CreateNewsDto) {
-    return this.newsService.create(createNewsDto);
-  }
-
+  @Roles('')
+  @UseGuards(AuthGuard, RolesGuard)
   @Get()
-  findAll() {
+  async findAll(@Request() req): Promise<News[]> {
     return this.newsService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.newsService.findOne(+id);
+  async findById(@Param('id') id: number): Promise<News> {
+    return this.newsService.findById(id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateNewsDto: UpdateNewsDto) {
-    return this.newsService.update(+id, updateNewsDto);
+  @Post()
+  async create(@Body() news: News): Promise<News> {
+    return this.newsService.create(news);
+  }
+
+  @Put(':id')
+  async update(@Param('id') id: number, @Body() updatedNews: Partial<News>): Promise<News> {
+    return this.newsService.update(id, updatedNews);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.newsService.remove(+id);
+  async delete(@Param('id') id: number): Promise<void> {
+    return this.newsService.delete(id);
   }
 }

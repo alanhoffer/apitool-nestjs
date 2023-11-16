@@ -5,11 +5,10 @@ import { Repository } from 'typeorm';
 import { createUserDto } from './dto/create-user.dto';
 
 @Injectable()
-export class UsersService {
+export class UserService {
 
     constructor(
-        @InjectRepository(User) 
-        private userRepository: Repository<User>
+        @InjectRepository(User) private userRepository: Repository<User>
     ){}
     
     // Function to get an (User) row finding in the db passing the id as conditional

@@ -1,9 +1,8 @@
-import { User } from 'src/users/user.entity';
+import { User } from 'src/user/user.entity';
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToOne, JoinColumn, Index, PrimaryColumn } from 'typeorm';
-import { Settings } from './settings.entity';
-import { APIARY_IMG_URL } from 'src/constants/nestConfig';
+import { Settings } from './setting/settings.entity';
 
-@Entity({ name: 'apiarys' })
+@Entity({ name: 'apiary' })
 export class Apiary {
 
     @PrimaryGeneratedColumn()

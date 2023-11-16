@@ -5,7 +5,7 @@ import {
   IsString,
   Length,
 } from 'class-validator';
-import { Settings } from '../../settings.entity';
+import { Settings } from '../setting/settings.entity';
 
 export class ApiaryDTO {
 

@@ -13,33 +13,30 @@ import {
   ParseIntPipe,
   UseInterceptors,
   UploadedFile,
-  MaxFileSizeValidator,
-  FileTypeValidator,
-  ParseFilePipe,
   StreamableFile,
   Res,
 } from '@nestjs/common';
-import { ApiarysService } from './apiarys.service';
-import { createApiaryDto } from './dto/apiary/create-apiary.dto';
-import { updateApiaryDto } from './dto/apiary/update-apiary.dto';
+import { ApiaryService } from './apiary.service';
+import { createApiaryDto } from './dto/create-apiary.dto';
+import { updateApiaryDto } from './dto/update-apiary.dto';
 import { AuthGuard } from 'src/auth/auth.guard';
-import { updateSettingsDto } from './dto/settings/update-settings.dto';
+import { updateSettingsDto } from './setting/dto/update-settings.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { v4 as uuidv4 } from 'uuid';
 import { join } from 'path';
-import { of } from 'rxjs';
 import { createReadStream } from 'fs';
 import { Response } from 'express';
 import { Apiary } from './apiary.entity';
-import { UsersService } from 'src/users/users.service';
+import { UserService } from 'src/user/user.service';
+
 
 @Controller('apiarys')
-export class ApiarysController {
+export class ApiaryController {
   constructor(
-    private apiarysService: ApiarysService,
-    private usersService: UsersService,
-  ) {}
+    private apiaryService: ApiaryService,
+    private userService: UserService,
+  ) { }
 
   // requests that we can manage the (apiary, apiary settings, apiary history)
   // AuthGuard checks that u have logged in or if ur JWT is valid
@@ -53,7 +50,7 @@ export class ApiarysController {
     @Param('id', ParseIntPipe) id: number,
   ): Promise<Apiary | HttpException> {
     // getting the apiary passing the Param id
-    const foundedApiary = await this.apiarysService.getApiary(id);
+    const foundedApiary = await this.apiaryService.getApiary(id);
 
     // if apiary is null will return new HttpException
     if (!foundedApiary) {
@@ -84,7 +81,6 @@ export class ApiarysController {
         filename: (req, file, cb) => {
           const filename: string = uuidv4();
           const extension: string = file.originalname.split('.').pop();
-          console.log(file);
           cb(null, `${filename}.${extension}`);
         },
       }),
@@ -96,19 +92,19 @@ export class ApiarysController {
     @UploadedFile() file: Express.Multer.File,
   ): Promise<Apiary | HttpException> {
 
-    console.log(apiary)    // this consts were obtained by the request and the FileInterceptor result
+    // this consts were obtained by the request and the FileInterceptor result
     const userId = req.user.sub;
     apiary.image = file && `${file.filename}`;
 
 
     // check if the user that makes the request exists if not exists will return HttpException
-    const foundUser = await this.usersService.getUser(userId);
+    const foundUser = await this.userService.getUser(userId);
     if (!foundUser) {
       return new HttpException('User not found', HttpStatus.NOT_FOUND);
     }
 
     // else if exists will attempt to create the apiary passing the userid, request body (apiary information), and file (apiary image)
-    const apiaryCreated = this.apiarysService.createApiary(
+    const apiaryCreated = this.apiaryService.createApiary(
       userId,
       apiary,
     );
@@ -127,7 +123,7 @@ export class ApiarysController {
   @Delete(':id')
   async deleteApiary(@Request() req, @Param('id', ParseIntPipe) id: number) {
     // Retrieves the apiary with the given id using the apiarysService.
-    const foundApiary = await this.apiarysService.getApiary(id);
+    const foundApiary = await this.apiaryService.getApiary(id);
 
     // If the apiary doesn't exist, returns a NOT_FOUND HttpException.
     if (!foundApiary) {
@@ -143,7 +139,7 @@ export class ApiarysController {
     }
 
     // If the apiary exists and belongs to the authenticated user, deletes it using the apiarysService.
-    return this.apiarysService.deleteApiary(foundApiary.id);
+    return this.apiaryService.deleteApiary(foundApiary.id);
   }
 
   // Uses the AuthGuard to protect the endpoint from unauthorized access.
@@ -158,7 +154,6 @@ export class ApiarysController {
         filename: (req, file, cb) => {
           const filename: string = uuidv4();
           const extension: string = file.originalname.split('.').pop();
-          console.log(file);
           cb(null, `${filename}.${extension}`);
         },
       }),
@@ -171,11 +166,11 @@ export class ApiarysController {
     @UploadedFile() file: Express.Multer.File,
   ) {
 
-    
+
     apiary.image = file && `${file.filename}`;
 
     // Retrieves the apiary with the given id using the apiarysService.
-    const foundApiary = await this.apiarysService.getApiary(id);
+    const foundApiary = await this.apiaryService.getApiary(id);
 
     // If the apiary doesn't exist, returns a NOT_FOUND HttpException.
     if (!foundApiary) {
@@ -191,7 +186,7 @@ export class ApiarysController {
     }
 
     // If the apiary exists and belongs to the authenticated user, updates it using the apiarysService.
-    const updatedApiary = await this.apiarysService.updateApiary(id, apiary);
+    const updatedApiary = await this.apiaryService.updateApiary(id, apiary);
     return updatedApiary;
   }
 
@@ -211,8 +206,10 @@ export class ApiarysController {
   @UseGuards(AuthGuard)
   @Get()
   async getApiarys(@Request() req) {
+
+
     // Calls the getAllByUserId method of the apiarysService to retrieve an array of Apiary objects belonging to the authenticated user.
-    const apiaryArrayFound = this.apiarysService.getAllByUserId(req.user.sub);
+    const apiaryArrayFound = this.apiaryService.getAllByUserId(req.user.sub);
 
     // If the array of Apiary objects is empty, returns a NOT_FOUND HttpException.
     if (!apiaryArrayFound) {
@@ -231,7 +228,7 @@ export class ApiarysController {
     @Param('id', ParseIntPipe) apiaryId: number,
   ) {
     // Calls the getApiary method of the apiarysService to retrieve the Apiary object with the given apiaryId.
-    const apiaryFound = await this.apiarysService.getApiary(apiaryId);
+    const apiaryFound = await this.apiaryService.getApiary(apiaryId);
 
     // If the Apiary object is not found, returns a NOT_FOUND HttpException.
     if (!apiaryFound) {
@@ -247,7 +244,7 @@ export class ApiarysController {
     }
 
     // Calls the getAllHistory method of the apiarysService to retrieve an array of History objects belonging to the Apiary object with the given apiaryId.
-    const foundHistory = await this.apiarysService.getAllHistory(apiaryId);
+    const foundHistory = await this.apiaryService.getAllHistory(apiaryId);
 
     // If the array of History objects is empty, returns an UNAUTHORIZED HttpException.
     if (!foundHistory) {
@@ -283,7 +280,7 @@ export class ApiarysController {
     }
 
     // Get the existing settings for the specified ID
-    const foundSettings = await this.apiarysService.getSettings(settingsId);
+    const foundSettings = await this.apiaryService.getSettings(settingsId);
 
     // If the APIary ID in the updated settings object does not match the APIary ID
     // of the found settings, return an unauthorized error response
@@ -300,6 +297,6 @@ export class ApiarysController {
     }
 
     // Otherwise, update the settings using the provided DTO object
-    return this.apiarysService.updateSettings(settingsId, updateSettingsDto);
+    return this.apiaryService.updateSettings(settingsId, updateSettingsDto);
   }
 }

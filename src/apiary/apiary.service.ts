@@ -1,26 +1,42 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger, ConsoleLogger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, Repository, UpdateResult } from 'typeorm';
 import { Apiary } from './apiary.entity';
-import { createApiaryDto } from './dto/apiary/create-apiary.dto';
-import { UsersService } from 'src/users/users.service';
-import { Settings } from './settings.entity';
-import { updateApiaryDto } from './dto/apiary/update-apiary.dto';
-import { updateSettingsDto } from './dto/settings/update-settings.dto';
-import { createSettingsDto } from './dto/settings/create-settings.dto';
-import { History } from './history.entity';
-import { ApiaryDTO } from './dto/apiary/apiary.dto';
-import { APIARY_IMG_URL } from 'src/constants/nestConfig';
+import { createApiaryDto } from './dto/create-apiary.dto';
+import { Settings } from './setting/settings.entity';
+import { updateApiaryDto } from './dto/update-apiary.dto';
+import { updateSettingsDto } from './setting/dto/update-settings.dto';
+import { createSettingsDto } from './setting/dto/create-settings.dto';
+import { History } from './history/history.entity';
+import { ApiaryDTO } from './dto/apiary.dto';
+import { Cron, CronExpression } from '@nestjs/schedule';
+
+
 
 @Injectable()
-export class ApiarysService {
+export class ApiaryService {
+  
+  private readonly logger = new Logger(ApiaryService.name)
+
   constructor(
+    
     @InjectRepository(Apiary) private apiaryRepository: Repository<Apiary>,
     @InjectRepository(History) private historyRepository: Repository<History>,
     @InjectRepository(Settings)
     private settingsRepository: Repository<Settings>,
-    private usersService: UsersService,
-  ) {}
+  ) { }
+
+
+
+
+  @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
+  async handleCronSubstractOneDay() {
+    await this.apiaryRepository.query('CALL SubtractOneDayFromTFence()');
+    await this.apiaryRepository.query('CALL SubtractOneDayFromTAmitraz()');
+    await this.apiaryRepository.query('CALL SubtractOneDayFromTFlumetrine()');
+    await this.apiaryRepository.query('CALL SubtractOneDayFromTOxalic()');
+    this.logger.log('Se han restado un día a los valores de los parámetros relacionados con los apiarios.');
+  }
 
   async getAllByUserId(id: number) {
     const apiaryArrayFound: Apiary[] = await this.apiaryRepository.find({
@@ -136,7 +152,7 @@ export class ApiarysService {
     // we search if find any apiary with that id and user
     const apiaryFound = await this.apiaryRepository.findOne({ where: { id } });
 
-    
+
     // if not found anyone return undefined
     if (!apiaryFound) {
       return undefined;
@@ -182,13 +198,13 @@ export class ApiarysService {
     if (!settingsFound) {
       return undefined;
     }
-    
+
     // else attempt to update the settings
     const updatedSettings = await this.settingsRepository.update(
       { id },
       settings,
     );
-    
+
     // return the result of the attempt
     return updatedSettings;
   }
@@ -206,7 +222,7 @@ export class ApiarysService {
 
     // else attempt to delete the settings
     const deletedSettings = this.settingsRepository.delete(id);
-    
+
     // return the result of the attempt
     return deletedSettings;
   }
@@ -219,10 +235,10 @@ export class ApiarysService {
     });
 
     // if dont exists return undefined
-    if(!historyFounded){
+    if (!historyFounded) {
       return undefined
     }
-    
+
     // return the result of the attempt
     return historyFounded;
   }
