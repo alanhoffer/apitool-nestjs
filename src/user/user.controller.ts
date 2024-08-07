@@ -20,6 +20,7 @@ export class UsersController {
 
         // Obtiene el usuario pasando el parámetro 'id'
         const foundUser = await this.userService.getUser(id);
+
         // Si el usuario no existe, devuelve una nueva HttpException
         if (!foundUser) {
             throw new HttpException('User not found', HttpStatus.NOT_FOUND);

@@ -23,7 +23,7 @@ export class History {
     @Column({nullable: true})
     valor_nuevo: string;
 
-    @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
+    @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
     fecha_cambio: Date;
 
 
