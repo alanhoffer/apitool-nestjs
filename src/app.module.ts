@@ -19,7 +19,7 @@ import { ScheduleModule } from '@nestjs/schedule';
     ScheduleModule.forRoot(),
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: '192.168.1.149',
+      host: 'localhost',
       port: 5432,
       password: '15441109Gordo.',
       username: 'bija',
