@@ -15,11 +15,12 @@ import { Cron, CronExpression } from '@nestjs/schedule';
 
 @Injectable()
 export class ApiaryService {
-  
+
   private readonly logger = new Logger(ApiaryService.name)
+  historyService: any;
 
   constructor(
-    
+
     @InjectRepository(Apiary) private apiaryRepository: Repository<Apiary>,
     @InjectRepository(History) private historyRepository: Repository<History>,
     @InjectRepository(Settings)
@@ -146,29 +147,34 @@ export class ApiaryService {
     return deletedApiary;
   }
 
-  // Function to delete an apiary passing the apiaryId, and the apiary changed as updateApiaryDto
-  async updateApiary(id: number, apiary: updateApiaryDto): Promise<UpdateResult | undefined> {
+  // Function to update an apiary passing the apiaryId, and the updated data as updateApiaryDto
+  async updateApiary(id: number, apiary: updateApiaryDto): Promise<Apiary | undefined> {
 
-    // we search if find any apiary with that id and user
-    const apiaryFound = await this.apiaryRepository.findOne({ where: { id } });
+    try {
+      // Search for the apiary by id
+      const apiaryFound = await this.apiaryRepository.findOne({ where: { id } });
 
+      // If no apiary found, return undefined
+      if (!apiaryFound) {
+        return undefined;
+      }
 
-    // if not found anyone return undefined
-    if (!apiaryFound) {
-      return undefined;
+      // Update the apiary
+      await this.apiaryRepository.update({ id }, { ...apiaryFound, ...apiary });
+
+      // Retrieve the updated apiary
+      const updatedApiary = await this.apiaryRepository.findOne({ where: { id } });
+
+      // Log changes (if applicable)
+      await this.historyService.logChanges(apiaryFound, apiary);
+
+      // Return the updated apiary
+      return updatedApiary;
+
+    } catch (error) {
+      // Handle and throw a custom error if necessary
+      throw new Error('Error updating apiary');
     }
-
-    // else attempt to update the apiary
-    const updatedApiary = this.apiaryRepository.update(
-      { id },
-      {
-        ...apiaryFound, // existing fields
-        ...apiary, // updated fields
-      },
-    );
-
-    // return the result of the attempt
-    return updatedApiary;
   }
 
   // Function to get the apiary settings passing the settings id

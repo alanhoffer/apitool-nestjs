@@ -2,10 +2,10 @@ export class HistoryDTO {
 
     private _userId:number;
     private _apiaryId: number;
-    private _nombre_columna: string;
-    private _valor_anterior: string;
-    private _valor_nuevo: string;
-    private _fecha_cambio: Date;
+    private _field: string;
+    private _previousValue: string;
+    private _newValue: string;
+    private _changeDate: Date;
 
     get userId(): number {
         return this._userId;
@@ -23,35 +23,35 @@ export class HistoryDTO {
         this._apiaryId = value;
     }
 
-    get nombre_columna(): string {
-        return this._nombre_columna;
+    get field(): string {
+        return this._field;
     }
 
-    set nombre_columna(value: string) {
-        this._nombre_columna = value;
+    set field(value: string) {
+        this._field = value;
     }
 
-    get valor_anterior(): string {
-        return this._valor_anterior;
+    get previousValue(): string {
+        return this._previousValue;
     }
 
-    set valor_anterior(value: string) {
-        this._valor_anterior = value;
+    set previousValue(value: string) {
+        this._previousValue = value;
     }
 
-    get valor_nuevo(): string {
-        return this._valor_nuevo;
+    get newValue(): string {
+        return this._newValue;
     }
 
-    set valor_nuevo(value: string) {
-        this._valor_nuevo = value;
+    set newValue(value: string) {
+        this._newValue = value;
     }
 
-    get fecha_cambio(): Date {
-        return this._fecha_cambio;
+    get changeDate(): Date {
+        return this._changeDate;
     }
 
-    set fecha_cambio(value: Date) {
-        this._fecha_cambio = value;
+    set changeDate(value: Date) {
+        this._changeDate = value;
     }
 }

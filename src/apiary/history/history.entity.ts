@@ -15,16 +15,16 @@ export class History {
     apiaryId: number;
     
     @Column()
-    nombre_columna: string;
+    field: string;
 
     @Column({nullable: true})
-    valor_anterior: string;
+    previousValue: string;
 
     @Column({nullable: true})
-    valor_nuevo: string;
+    newValue: string;
 
     @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-    fecha_cambio: Date;
+    changeDate: Date;
 
 
 }

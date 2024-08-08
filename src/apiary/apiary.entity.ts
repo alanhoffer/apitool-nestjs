@@ -12,7 +12,7 @@ export class Apiary {
     @Index()
     name: string;
 
-    @PrimaryColumn({nullable: false})
+    @Column({nullable: false})
     userId: number;
 
     @Column({ default: `apiary-default.png` })
