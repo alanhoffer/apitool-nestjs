@@ -166,7 +166,13 @@ export class ApiaryService {
       const updatedApiary = await this.apiaryRepository.findOne({ where: { id } });
 
       // Log changes (if applicable)
-      await this.historyService.logChanges(apiaryFound, apiary);
+      try {
+
+        await this.historyService.logChanges(apiaryFound, apiary);
+      }
+      catch(error){
+        console.log(error)
+      }
 
       // Return the updated apiary
       return updatedApiary;
