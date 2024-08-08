@@ -13,6 +13,7 @@ export class HistoryService {
 
     async logChanges(apiaryFound: Apiary, apiaryUpdate: Partial<Apiary>): Promise<void> {
         const changes = this.findDifferences(apiaryFound, apiaryUpdate);
+        console.log(changes)
 
         for (const change of changes) {
             const historyEntry = new History();
