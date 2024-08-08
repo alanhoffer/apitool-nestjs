@@ -29,6 +29,8 @@ export class HistoryService {
     private findDifferences(apiaryFound: Apiary, apiaryUpdate: Partial<Apiary>): Array<{ field: string, previousValue: string, newValue: string }> {
         const changes: Array<{ field: string, previousValue: string, newValue: string }> = [];
 
+        console.log(apiaryUpdate, apiaryFound)
+        
         for (const key in apiaryUpdate) {
             if (apiaryUpdate.hasOwnProperty(key)) {
                 const oldValue = (apiaryFound as any)[key];

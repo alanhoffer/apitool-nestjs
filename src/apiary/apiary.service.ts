@@ -20,11 +20,9 @@ export class ApiaryService {
   historyService: any;
 
   constructor(
-
     @InjectRepository(Apiary) private apiaryRepository: Repository<Apiary>,
     @InjectRepository(History) private historyRepository: Repository<History>,
-    @InjectRepository(Settings)
-    private settingsRepository: Repository<Settings>,
+    @InjectRepository(Settings) private settingsRepository: Repository<Settings>,
   ) { }
 
 
@@ -166,13 +164,7 @@ export class ApiaryService {
       const updatedApiary = await this.apiaryRepository.findOne({ where: { id } });
 
       // Log changes (if applicable)
-      try {
-
-        await this.historyService.logChanges(apiaryFound, apiary);
-      }
-      catch(error){
-        console.log(error)
-      }
+      await this.historyService.logChanges(apiaryFound, apiary);
 
       // Return the updated apiary
       return updatedApiary;
