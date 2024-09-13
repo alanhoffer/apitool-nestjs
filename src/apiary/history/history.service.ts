@@ -11,9 +11,13 @@ export class HistoryService {
         private historyRepository: Repository<History>,
     ) { }
 
+    async changes(){
+
+    }
+
     async logChanges(apiaryFound: Apiary, apiaryUpdate: Partial<Apiary>): Promise<void> {
         const changes = this.findDifferences(apiaryFound, apiaryUpdate);
-        console.log(changes)
+
 
         for (const change of changes) {
             const historyEntry = new History();
@@ -29,8 +33,6 @@ export class HistoryService {
 
     private findDifferences(apiaryFound: Apiary, apiaryUpdate: Partial<Apiary>): Array<{ field: string, previousValue: string, newValue: string }> {
         const changes: Array<{ field: string, previousValue: string, newValue: string }> = [];
-
-        console.log(apiaryUpdate, apiaryFound)
         
         for (const key in apiaryUpdate) {
             if (apiaryUpdate.hasOwnProperty(key)) {
@@ -46,7 +48,6 @@ export class HistoryService {
                 }
             }
         }
-        console.log(changes);
         return changes;
     }
 

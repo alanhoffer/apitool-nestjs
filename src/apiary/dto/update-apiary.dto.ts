@@ -14,4 +14,5 @@ export class updateApiaryDto {
   tFlumetrine?: number;
   tFence?: number;
   tComment?: string;
+  transhumance: number;
 }

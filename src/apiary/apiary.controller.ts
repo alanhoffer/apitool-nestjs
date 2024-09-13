@@ -29,6 +29,7 @@ import { createReadStream } from 'fs';
 import { Response } from 'express';
 import { Apiary } from './apiary.entity';
 import { UserService } from '../user/user.service';
+import { SettingsService } from './setting/settings.service';
 
 
 @Controller('apiarys')
@@ -36,6 +37,7 @@ export class ApiaryController {
   constructor(
     private apiaryService: ApiaryService,
     private userService: UserService,
+    private settingsService: SettingsService
   ) { }
 
   // requests that we can manage the (apiary, apiary settings, apiary history)
@@ -167,7 +169,9 @@ export class ApiaryController {
   ) {
 
 
-    apiary.image = file && `${file.filename}`;
+    if(file){
+      apiary.image = file && `${file.filename}`;
+    }
 
     // Retrieves the apiary with the given id using the apiarysService.
     const foundApiary = await this.apiaryService.getApiary(id);
@@ -280,7 +284,7 @@ export class ApiaryController {
     }
 
     // Get the existing settings for the specified ID
-    const foundSettings = await this.apiaryService.getSettings(settingsId);
+    const foundSettings = await this.settingsService.getSettings(settingsId);
 
     // If the APIary ID in the updated settings object does not match the APIary ID
     // of the found settings, return an unauthorized error response
@@ -297,6 +301,26 @@ export class ApiaryController {
     }
 
     // Otherwise, update the settings using the provided DTO object
-    return this.apiaryService.updateSettings(settingsId, updateSettingsDto);
+    return this.settingsService.updateSettings(settingsId, updateSettingsDto);
+  }
+  @UseGuards(AuthGuard)
+  @Put('harvest/all')
+  async setHarvestingForAll(
+    @Request() req,
+    @Body() body: { harvesting: boolean } // Recibe el valor de harvesting en el cuerpo de la solicitud
+  ): Promise<void> {
+    try {
+      const userId = req.user.sub;
+      const { harvesting } = body; // Obtén el valor de harvesting del cuerpo de la solicitud
+
+      // Actualizar el estado de cosecha para todos los apiarios del usuario
+      await this.settingsService.setHarvestingForAllApiaries(userId, harvesting);
+
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException('Failed to set harvesting for all apiaries.', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 }

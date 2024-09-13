@@ -1,5 +1,5 @@
 import { User } from '../user/user.entity';
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToOne, JoinColumn, Index, PrimaryColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToOne, JoinColumn, Index } from 'typeorm';
 import { Settings } from './setting/settings.entity';
 
 @Entity({ name: 'apiary' })
@@ -12,7 +12,7 @@ export class Apiary {
     @Index()
     name: string;
 
-    @Column({nullable: false})
+    @Column({ nullable: false })
     userId: number;
 
     @Column({ default: `apiary-default.png` })
@@ -24,13 +24,13 @@ export class Apiary {
     @Column({ default: 'normal' })
     status: string;
 
-    @Column({ default: 0 })
+    @Column({ type: 'numeric', precision: 10, scale: 2, default: 0 })
     honey: number;
 
-    @Column({ default: 0 })
+    @Column({ type: 'numeric', precision: 10, scale: 2, default: 0 })
     levudex: number;
 
-    @Column({ default: 0 })
+    @Column({ type: 'numeric', precision: 10, scale: 2, default: 0 })
     sugar: number;
 
     @Column({ default: 0 })
@@ -56,6 +56,9 @@ export class Apiary {
 
     @Column({ default: '' })
     tComment: string;
+    
+    @Column({ default: 0 })
+    transhumance: number;
 
     @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
     createdAt: Date;
@@ -63,13 +66,13 @@ export class Apiary {
     @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
     updatedAt: Date;
 
-    @ManyToOne(() => User, user => user.apiarys,{
+    @ManyToOne(() => User, user => user.apiarys, {
         onDelete: 'CASCADE',
     })
     @JoinColumn()
     user: User;
 
     @OneToOne(() => Settings, settings => settings.apiary)
-    settings: Settings
+    settings: Settings;
 
 }

@@ -1,4 +1,5 @@
 import {
+  IsBoolean,
   IsDate,
   IsInt,
   IsObject,
@@ -25,6 +26,8 @@ export class ApiaryDTO {
   private tFlumetrine: number;
   private tFence: number;
   private tComment: string;
+  private harvesting: boolean;
+  private transhumance: number;
   private settings: Settings;
   private updatedAt: Date;
 
@@ -172,6 +175,26 @@ export class ApiaryDTO {
   public set _tComment(value: string) {
     this.tComment = value;
   }
+
+  @IsBoolean()
+   public get _harvesting(): boolean {
+    return this.harvesting;
+  }
+
+  public set _harvesting(value: boolean) {
+    this.harvesting = value;
+  }
+
+  @IsBoolean()
+  public get _transhumance(): number {
+   return this.transhumance;
+ }
+
+ public set _transhumance(value: number) {
+   this.transhumance = value;
+ }
+
+
 
   @IsObject()
    public get _settings(): Settings {

@@ -47,6 +47,12 @@ export class Settings {
     @Column({default: true })
     tComment: boolean;
 
+    @Column({default: true })
+    transhumance: boolean;
+
+    @Column({default: false})
+    harvesting: boolean;
+
     @OneToOne(() => Apiary, (apiary) => apiary.settings, {
         onDelete: 'CASCADE',
     })

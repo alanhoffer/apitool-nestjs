@@ -13,4 +13,5 @@ export class updateSettingsDto {
         tFlumetrine?: boolean;
         tFence?: boolean;
         tComment?: boolean;
+        harvesting: boolean;
 }

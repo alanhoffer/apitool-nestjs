@@ -17,6 +17,7 @@ export class createApiaryDto {
     tFlumetrine?: number;
     tFence?: number;
     tComment?: string;
+    transhumance?: number;
     settings: string;
     createdAt?: Date;
     updatedAt?: Date;

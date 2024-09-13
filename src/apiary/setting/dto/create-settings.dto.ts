@@ -12,6 +12,7 @@ export class createSettingsDto {
     tAmitraz: boolean;
     tFlumetrine: boolean;
     tFence: boolean;
-    tComment: boolean;  
+    tComment: boolean;
+    harvesting: boolean;
     
 }
