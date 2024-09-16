@@ -150,7 +150,7 @@ export class ApiaryService {
       await this.apiaryRepository.update({ id }, { ...apiaryFound, ...apiaryDto });
       const updatedApiary = await this.apiaryRepository.findOne({ where: { id } });
 
-      console.log(updatedApiary)
+      await this.historyService.logChanges(apiaryFound, updatedApiary)
 
       this.logger.log(`Apiary with id ${id} updated successfully.`);
       return updatedApiary;
