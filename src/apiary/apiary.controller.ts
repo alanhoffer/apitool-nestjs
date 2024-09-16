@@ -84,6 +84,8 @@ export class ApiaryController {
           const filename: string = uuidv4();
           const extension: string = file.originalname.split('.').pop();
           cb(null, `${filename}.${extension}`);
+          console.log(`Uploading file: ${filename}.${extension}`);
+
         },
       }),
     }),
@@ -98,13 +100,13 @@ export class ApiaryController {
     const userId = req.user.sub;
     apiary.image = file && `${file.filename}`;
 
-
+    console.log(apiary.image)
     // check if the user that makes the request exists if not exists will return HttpException
     const foundUser = await this.userService.getUser(userId);
     if (!foundUser) {
       return new HttpException('User not found', HttpStatus.NOT_FOUND);
     }
-
+    console.log(apiary)
     // else if exists will attempt to create the apiary passing the userid, request body (apiary information), and file (apiary image)
     const apiaryCreated = this.apiaryService.createApiary(
       userId,
@@ -152,11 +154,11 @@ export class ApiaryController {
     FileInterceptor('file', {
       storage: diskStorage({
         destination: './uploads',
-
         filename: (req, file, cb) => {
           const filename: string = uuidv4();
           const extension: string = file.originalname.split('.').pop();
           cb(null, `${filename}.${extension}`);
+          console.log(`Uploading file: ${filename}.${extension}`);
         },
       }),
     }),
@@ -166,34 +168,34 @@ export class ApiaryController {
     @Param('id', ParseIntPipe) id: number,
     @Body() apiary: updateApiaryDto,
     @UploadedFile() file: Express.Multer.File,
-  ) {
-
-
-    if(file){
-      apiary.image = file && `${file.filename}`;
-    }
-
-    // Retrieves the apiary with the given id using the apiarysService.
+  ): Promise<Apiary | HttpException> {
+    // Retrieve the apiary with the given ID
     const foundApiary = await this.apiaryService.getApiary(id);
-
-    // If the apiary doesn't exist, returns a NOT_FOUND HttpException.
+  
+    // If the apiary does not exist, return a NOT_FOUND HttpException
     if (!foundApiary) {
-      return new HttpException('Apiary not exists', HttpStatus.NOT_FOUND);
+      throw new HttpException('Apiary not exists', HttpStatus.NOT_FOUND);
     }
-
-    // If the apiary doesn't belong to the authenticated user, returns an UNAUTHORIZED HttpException.
-    if (foundApiary.userId != req.user.sub) {
-      return new HttpException(
-        'This apiary is not yours',
-        HttpStatus.UNAUTHORIZED,
-      );
+  
+    // If the apiary does not belong to the authenticated user, return an UNAUTHORIZED HttpException
+    if (foundApiary.userId !== req.user.sub) {
+      throw new HttpException('This apiary is not yours', HttpStatus.UNAUTHORIZED);
     }
-
-    // If the apiary exists and belongs to the authenticated user, updates it using the apiarysService.
+  
+    // Assign the new image filename if a file was uploaded
+    if (file) {
+      apiary.image = `${file.filename}`;
+    }
+  
+    // Update the apiary using the provided DTO object
     const updatedApiary = await this.apiaryService.updateApiary(id, apiary);
+
+    console.log(updatedApiary)
+  
+    // Return the updated apiary
     return updatedApiary;
   }
-
+  
   @Get('profile/image/:id')
   getFile(
     @Res({ passthrough: true }) res: Response,

@@ -57,7 +57,7 @@ export class Apiary {
     @Column({ default: '' })
     tComment: string;
     
-    @Column({ default: 0 })
+    @Column({ default: 0,type: 'integer', nullable: true })
     transhumance: number;
 
     @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })

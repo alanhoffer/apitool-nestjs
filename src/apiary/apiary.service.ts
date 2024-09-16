@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, Repository } from 'typeorm';
 import { Apiary } from './apiary.entity';
@@ -23,10 +23,10 @@ export class ApiaryService {
     private settingsService: SettingsService,
   ) {}
 
-  async getAllByUserId(id: number): Promise<ApiaryDTO[]> {
+  async getAllByUserId(userId: number): Promise<ApiaryDTO[]> {
     try {
       const apiaryArrayFound: Apiary[] = await this.apiaryRepository.find({
-        where: { userId: id },
+        where: { userId: userId },
         relations: ['settings'],
       });
 
@@ -84,28 +84,39 @@ export class ApiaryService {
   async createApiary(
     userId: number,
     apiaryDto: createApiaryDto,
-  ): Promise<Apiary | undefined> {
+  ): Promise<Apiary> {
     try {
-      apiaryDto['userId'] = userId;
-      const settingsDto: createSettingsDto = JSON.parse(apiaryDto.settings);
+      // Asignar el userId al DTO del apiario
+      apiaryDto.userId = userId;
+  
+      // Analizar la configuración y separarla del DTO del apiario
+      const settingsDto: createSettingsDto = JSON.parse(apiaryDto.settings || '{}');
       const { settings, ...apiaryData } = apiaryDto;
-
+  
+      // Crear una instancia del apiario usando el DTO (los valores undefined se manejan según el modelo de la entidad)
       const newApiary = this.apiaryRepository.create(apiaryData);
+  
+      // Guardar el nuevo apiario en la base de datos
       const newApiarySaved = await this.apiaryRepository.save(newApiary);
-
+  
+      // Crear una instancia de configuraciones asociadas al nuevo apiario
       const newSettings = this.settingsRepository.create({
         ...settingsDto,
         apiaryId: newApiarySaved.id,
         apiaryUserId: userId,
       });
+  
+      // Guardar las nuevas configuraciones en la base de datos
       const newSettingsSaved = await this.settingsRepository.save(newSettings);
-
+  
+      // Devolver el nuevo apiario junto con sus configuraciones
       return { ...newApiarySaved, settings: newSettingsSaved };
     } catch (error) {
       this.logger.error('Error al crear el apiario.', error.stack);
-      throw error;
+      throw new InternalServerErrorException('Error al crear el apiario.');
     }
   }
+  
 
   async deleteApiary(id: number): Promise<DeleteResult | undefined> {
     try {
@@ -127,7 +138,7 @@ export class ApiaryService {
     }
   }
 
-  async updateApiary(id: number, apiary: updateApiaryDto): Promise<Apiary | undefined> {
+  async updateApiary(id: number, apiaryDto: updateApiaryDto): Promise<Apiary | undefined> {
     try {
       const apiaryFound = await this.apiaryRepository.findOne({ where: { id } });
 
@@ -136,12 +147,12 @@ export class ApiaryService {
         return undefined;
       }
 
-      await this.apiaryRepository.update({ id }, { ...apiaryFound, ...apiary });
+      await this.apiaryRepository.update({ id }, { ...apiaryFound, ...apiaryDto });
       const updatedApiary = await this.apiaryRepository.findOne({ where: { id } });
 
-      await this.historyService.logChanges(apiaryFound, apiary);
-      this.logger.log(`Apiary with id ${id} updated successfully.`);
+      console.log(updatedApiary)
 
+      this.logger.log(`Apiary with id ${id} updated successfully.`);
       return updatedApiary;
     } catch (error) {
       this.logger.error(`Error al actualizar el apiario con id ${id}.`, error.stack);
