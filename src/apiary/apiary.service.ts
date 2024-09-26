@@ -13,6 +13,7 @@ import { SettingsService } from './setting/settings.service';
 
 @Injectable()
 export class ApiaryService {
+
   private readonly logger = new Logger(ApiaryService.name);
 
   constructor(
@@ -176,6 +177,24 @@ export class ApiaryService {
       this.logger.error(`Error al obtener el historial del apiario con id ${apiaryId}.`, error.stack);
       throw error;
     }
+  }
+
+  async countApiariesByUserId(userId: number): Promise<number> {
+    return this.apiaryRepository.count({ where: { userId } });
+  }
+  
+  async countHivesByUserId(userId: number): Promise<number> {
+
+    
+    const apiaries = await this.apiaryRepository.find({
+      where: { userId }, // Asegúrate de que la relación con las colmenas esté incluida
+    });
+    // Sumar la cantidad total de colmenas de todos los apiarios
+    const totalHives = apiaries.reduce((sum, apiary) => sum + apiary.hives, 0);
+
+    
+  
+    return totalHives;
   }
 
   async subtractFood(): Promise<void> {
