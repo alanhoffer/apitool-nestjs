@@ -12,6 +12,7 @@ import { History } from './apiary/history/history.entity';
 import { NewsModule } from './news/news.module';
 import { News } from './news/entities/news.entity';
 import { ScheduleModule } from '@nestjs/schedule';
+import { WeatherModule } from './weather/weather.module';
 
 
 @Module({
@@ -32,6 +33,7 @@ import { ScheduleModule } from '@nestjs/schedule';
     UsersModule,
     ApiaryModule,
     NewsModule,
+    WeatherModule
   ],
   controllers: [AppController],
   providers: [AppService],
