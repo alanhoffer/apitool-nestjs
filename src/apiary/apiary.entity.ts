@@ -1,5 +1,5 @@
 import { User } from '../user/user.entity';
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToOne, JoinColumn, Index } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToOne, JoinColumn, Index, UpdateDateColumn } from 'typeorm';
 import { Settings } from './setting/settings.entity';
 
 @Entity({ name: 'apiary' })
@@ -63,7 +63,7 @@ export class Apiary {
     @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
     createdAt: Date;
 
-    @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+    @UpdateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
     updatedAt: Date;
 
     @ManyToOne(() => User, user => user.apiarys, {
